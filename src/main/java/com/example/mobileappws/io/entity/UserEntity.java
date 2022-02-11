@@ -43,7 +43,7 @@ public class UserEntity implements Serializable {
 	@Column(nullable=false,columnDefinition = "boolean default false")
 	private Boolean emailVerificationStatus;
 	
-	@OneToMany(mappedBy="userDetails",cascade = {CascadeType.REMOVE})
+	@OneToMany(mappedBy="userDetails",cascade = {CascadeType.PERSIST})
 	private List<AddressEntity> addresses;
 	
 	@ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER )
@@ -52,10 +52,17 @@ public class UserEntity implements Serializable {
 			inverseJoinColumns = @JoinColumn(name="roles_id",referencedColumnName="id") )
 	private Collection<RoleEntity> roles;
 	
+	@OneToMany(mappedBy = "userDetails",cascade= CascadeType.PERSIST)
+	private Collection<AnnouncementEntity> announcements;
+	
 	
 	
 	@ManyToMany(mappedBy = "users")
 	private Collection<CourseEntity> courses;
+	
+	
+	@OneToMany(mappedBy = "userDetails",cascade = CascadeType.PERSIST)
+	private Collection<AssignmentUserEntity> assignmentsUsers;
 	
 	
 	public long getId() {
@@ -144,6 +151,14 @@ public class UserEntity implements Serializable {
 
 	public void setCourses(Collection<CourseEntity> courses) {
 		this.courses = courses;
+	}
+
+	public Collection<AnnouncementEntity> getAnnouncements() {
+		return announcements;
+	}
+
+	public void setAnnouncements(Collection<AnnouncementEntity> announcements) {
+		this.announcements = announcements;
 	}
 
 

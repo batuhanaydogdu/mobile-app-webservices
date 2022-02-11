@@ -34,11 +34,13 @@ import com.example.mobileappws.shared.dto.UserDto;
 import com.example.mobileappws.ui.model.request.UserDetailsRequestModel;
 import com.example.mobileappws.ui.model.response.AddressesRest;
 import com.example.mobileappws.ui.model.response.CourseRest;
+import com.example.mobileappws.ui.model.response.CourseSimpleRest;
 import com.example.mobileappws.ui.model.response.ErrorMessages;
 import com.example.mobileappws.ui.model.response.OperationStatusModel;
 import com.example.mobileappws.ui.model.response.RequestOperationName;
 import com.example.mobileappws.ui.model.response.RequestOperationStatus;
 import com.example.mobileappws.ui.model.response.UserRest;
+import com.example.mobileappws.ui.model.response.UserSimpleRest;
 
 @RestController
 @RequestMapping("users")
@@ -81,9 +83,9 @@ public class UserController {
 	
 	
 	@PostMapping
-	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception
+	public UserSimpleRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception
 	{
-		UserRest returnValue=new UserRest();
+		UserSimpleRest returnValue=new UserSimpleRest();
 		
 		if(userDetails.getFirstName().isEmpty()) throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 		
@@ -99,8 +101,8 @@ public class UserController {
 		
 		
 		UserDto createdUser=userService.createUser(userDto);
-		returnValue=modelMapper.map(userDto, UserRest.class);
-		                           //createduser ile değiştir
+		returnValue=modelMapper.map(createdUser, UserSimpleRest.class);
+		                           
 		
 		//BeanUtils.copyProperties(createdUser, returnValue);
 		
@@ -174,15 +176,13 @@ public class UserController {
 	
 	@PreAuthorize("hasRole('ACADEMICIAN') or #userId==principal.userId")
 	@GetMapping(path="/{userId}/courses")
-	public List<CourseRest> getMyCourses(@PathVariable String userId) 
+	public List<CourseSimpleRest> getMyCourses(@PathVariable String userId) 
 	{
-		List<CourseRest> returnValue=new ArrayList<>();
+		List<CourseSimpleRest> returnValue=new ArrayList<>();
 		
 		ModelMapper modelMapper=new ModelMapper();
 		modelMapper.getConfiguration()
         .setMatchingStrategy(MatchingStrategies.STRICT);
-		
-		
 		
 		
 		List<CourseDto> updatedCourses=courseService.getMyCourses(userId);
@@ -190,31 +190,29 @@ public class UserController {
 		
 		for(CourseDto courseDto:updatedCourses) {
 			
-			returnValue.add(modelMapper.map(courseDto, CourseRest.class));
-			
-			
-			
-		}
-		
-		
-		
-		
+			returnValue.add(modelMapper.map(courseDto, CourseSimpleRest.class));
+				
+		}	
 		return returnValue; 
 	}
+	/*
+	 * http://localhost:8080/mobile-app-ws/users/email-verification?token=sdfsdf
+	 */
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@GetMapping(path = "/email-verification")
+	public OperationStatusModel verifyEmailToken(@RequestParam(value = "token") String token) {
+    OperationStatusModel returnValue = new OperationStatusModel();
+    returnValue.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+    boolean isVerified = userService.verifyEmailToken(token);
+    
+    if(isVerified)
+    {
+       returnValue.setOperationResult(RequestOperationStatus.SUCCES.name());
+     } else {
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+    }
+    return returnValue;
+}
+
 	
 }

@@ -19,6 +19,10 @@ public class UserDto implements Serializable{
 	private List<AddressDTO> addresses;
 	private Collection<String> roles;
 	private Collection<CourseDto> courses;
+	private Collection<AnnouncementDto> announcements;
+	private Collection<AssignmentUserDto> assignmentsUsers;
+	
+	
 	
 	public UserDto() {
 		// TODO Auto-generated constructor stub
@@ -99,6 +103,22 @@ public class UserDto implements Serializable{
 	}
 	public void setCourses(Collection<CourseDto> courses) {
 		this.courses = courses;
+	}
+
+	public Collection<AnnouncementDto> getAnnouncements() {
+		return announcements;
+	}
+
+	public void setAnnouncements(Collection<AnnouncementDto> announcements) {
+		this.announcements = announcements;
+	}
+
+	public Collection<AssignmentUserDto> getAssignmentsUsers() {
+		return assignmentsUsers;
+	}
+
+	public void setAssignmentsUsers(Collection<AssignmentUserDto> assignmentsUsers) {
+		this.assignmentsUsers = assignmentsUsers;
 	}
 	
 	

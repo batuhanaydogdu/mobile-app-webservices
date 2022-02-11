@@ -2,6 +2,7 @@ package com.example.mobileappws.io.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -37,15 +39,30 @@ public class CourseEntity implements Serializable {
 	@Column(nullable=false)
 	private int section;
 	
-
 	
+	@ManyToMany(cascade = {CascadeType.ALL})
+	@JoinTable(name="courses_timeslots", 
+			joinColumns =  @JoinColumn(name="course_id",nullable = false, updatable = true,referencedColumnName="id"),
+			inverseJoinColumns = @JoinColumn(name="timeslot_id",nullable = false, updatable = true,referencedColumnName="id") )
+	private Collection<TimeSlotEntity> timeslots;
 	
-	//course is the owner of the users, so we hate to update it from courses
+		
+	//course is the owner of the users, so we have to update it from courses
 	@ManyToMany( )
 	@JoinTable(name="users_courses", 
 			joinColumns =  @JoinColumn(name="course_id",nullable = false, updatable = true,referencedColumnName="id"),
 			inverseJoinColumns = @JoinColumn(name="user_id",nullable = false, updatable = true,referencedColumnName="id") )
 	private Collection<UserEntity> users;
+	
+	@OneToMany(mappedBy = "courseDetails",cascade= CascadeType.PERSIST)
+	private Collection<AnnouncementEntity> announcements;
+	
+	@OneToMany(mappedBy="courseDetails",cascade = {CascadeType.PERSIST})
+	private List<AssignmentEntity> assignments;
+	
+	
+	
+	
 
 	public String getCourseId() {
 		return courseId;
@@ -93,6 +110,22 @@ public class CourseEntity implements Serializable {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Collection<TimeSlotEntity> getTimeslots() {
+		return timeslots;
+	}
+
+	public void setTimeslots(Collection<TimeSlotEntity> timeslots) {
+		this.timeslots = timeslots;
+	}
+
+	public Collection<AnnouncementEntity> getAnnouncements() {
+		return announcements;
+	}
+
+	public void setAnnouncements(Collection<AnnouncementEntity> announcements) {
+		this.announcements = announcements;
 	}
 
 

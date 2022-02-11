@@ -6,17 +6,24 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.mobileappws.io.entity.AnnouncementEntity;
 import com.example.mobileappws.io.entity.CourseEntity;
 import com.example.mobileappws.io.entity.RoleEntity;
+import com.example.mobileappws.io.entity.TimeSlotEntity;
 import com.example.mobileappws.io.entity.UserEntity;
+import com.example.mobileappws.io.repository.AnnouncementRepository;
 import com.example.mobileappws.io.repository.CourseRepository;
+import com.example.mobileappws.io.repository.TimeSlotRepository;
 import com.example.mobileappws.io.repository.UserRepository;
 import com.example.mobileappws.service.CourseService;
 import com.example.mobileappws.shared.dto.AddressDTO;
+import com.example.mobileappws.shared.dto.AnnouncementDto;
 import com.example.mobileappws.shared.dto.CourseDto;
+import com.example.mobileappws.shared.dto.TimeSlotDto;
 import com.example.mobileappws.shared.dto.UserDto;
 import com.example.mobileappws.shared.dto.Utils;
 
@@ -29,6 +36,10 @@ public class CourseServiceImpl implements CourseService {
 	Utils utils;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	TimeSlotRepository timeSlotRepository;
+	@Autowired 
+	AnnouncementRepository announcementRepository;
 	
 	@Override
 	public CourseDto createCourse(CourseDto course) {
@@ -41,6 +52,8 @@ public class CourseServiceImpl implements CourseService {
 				
 				
 				ModelMapper modelMapper=new ModelMapper();
+				modelMapper.getConfiguration()
+		        .setMatchingStrategy(MatchingStrategies.STRICT); //it has to match with perfectly matching names
 				
 				
 				Collection<UserDto> listofUsers=new ArrayList<>();
@@ -52,12 +65,26 @@ public class CourseServiceImpl implements CourseService {
 				
 				course.setUsers(listofUsers);
 				
-				
+	
 				
 				
 				CourseEntity courseEntity=modelMapper.map(course, CourseEntity.class);
 				System.out.println("----------------------------------------------");
+				//worst case timeslot kendin kaydet yoksa eğer sonra al
 				
+/*			
+				for(TimeSlotDto timeslot:course.getTimeslots()) {
+					if(timeSlotRepository.findTimeSlotByDayAndSlot(timeslot.getDay(), timeslot.getSlot())==null) {
+						TimeSlotEntity timeSlotEntity=modelMapper.map(timeslot, TimeSlotEntity.class);
+						courseEntity.getTimeslots().add(timeSlotRepository.save(timeSlotEntity));
+					}
+					else {
+						TimeSlotEntity timeSlotEntity=timeSlotRepository.findTimeSlotByDayAndSlot(timeslot.getDay(), timeslot.getSlot());
+						courseEntity.getTimeslots().add(timeSlotEntity);
+					}
+					
+					
+				}*/
 				
 			
 				
@@ -70,7 +97,7 @@ public class CourseServiceImpl implements CourseService {
 				
 				
 				CourseEntity storedCourseDetails= courseRepository.save(courseEntity);
-				
+				//we are storing timeslot info every time because in our domain the time description is dependent on the academician
 				CourseDto returnValue=modelMapper.map(storedCourseDetails, CourseDto.class);
 
 				return returnValue;
@@ -147,6 +174,44 @@ public class CourseServiceImpl implements CourseService {
 			returnValue.add(modelMapper.map(courseEntity, CourseDto.class));
 			
 		}
+		
+		
+		
+		
+		return returnValue;
+	}
+	@Override
+	public List<AnnouncementDto> getAnnouncementsOfTheCourse(String courseId) {
+		
+		List<AnnouncementDto> returnValue = new ArrayList<>();
+		List<AnnouncementEntity> listOfAnnouncement = announcementRepository.getAnnoucementsOfTheCourseByCourseId(courseId);
+		ModelMapper modelMapper=new ModelMapper();
+		
+		for(AnnouncementEntity announcementEntity : listOfAnnouncement) {
+			
+			returnValue.add(modelMapper.map(announcementEntity, AnnouncementDto.class));
+		}
+		
+		
+		return returnValue;
+	}
+
+
+	@Override
+	public List<UserDto> getParticipantsOfTheCourse(String courseId) {
+
+		
+		//getUsersOfTheCourseByCourseId
+		List<UserDto> returnValue=new ArrayList<>();
+		
+		List<UserEntity> listOfUsers=userRepository.getUsersOfTheCourseByCourseId(courseId);
+		ModelMapper modelMapper=new ModelMapper();
+		
+		for(UserEntity userEntity : listOfUsers) {
+			
+			returnValue.add(modelMapper.map(userEntity, UserDto.class));
+		}
+		
 		
 		
 		

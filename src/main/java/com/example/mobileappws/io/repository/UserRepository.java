@@ -18,11 +18,22 @@ import com.example.mobileappws.io.entity.UserEntity;
 public interface UserRepository extends PagingAndSortingRepository<UserEntity, Long> {
 	UserEntity findByEmail(String email);
 	UserEntity findByUserId(String userId);
+	UserEntity findUserByEmailVerificationToken(String token);
 	
 	@Query(value="select * from Users u where u.EMAIL_VERIFICATION_STATUS='true'",
 			countQuery="select * from Users u where u.EMAIL_VERIFICATION_STATUS='true'"
 			,nativeQuery=true)
 	Page<UserEntity> findAllUsersWithConfirmedEmailAddress(Pageable pageableRequest);
+	
+	@Query(value="select u.* from ((courses c inner join users_courses uc on c.id=uc.course_id) "
+			+ " inner join users u on uc.user_id=u.id)"
+			+ " where c.course_id=:courseId",nativeQuery = true)
+	List<UserEntity> getUsersOfTheCourseByCourseId(@Param("courseId")String courseId);
+	
+	
+	
+	
+	
 
 	@Query(value="select * from Users u where u.first_name=?1 ",nativeQuery = true)
 	List<UserEntity> findUserByFirstName(String firstName);

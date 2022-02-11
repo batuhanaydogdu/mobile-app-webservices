@@ -10,6 +10,7 @@ import com.example.mobileappws.security.SecurityConstants;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class Utils {
@@ -32,6 +33,9 @@ public class Utils {
 	public String generateCourseId(int length) {
 		return generateRandomString(length);
 	}
+	public String generateAnnouncementId(int length) {
+		return generateRandomString(length);
+	}
 	
 	
 	private String generateRandomString(int length)
@@ -52,6 +56,15 @@ public class Utils {
 		Date todayDate=new Date();
 		
 		return tokenExpirationDate.before(todayDate);
+	}
+	
+	public String generateEmailVerificationToken(String userId) {
+	    String token = Jwts.builder()
+	            .setSubject(userId)
+	            .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants. EXPIRATION_TIME))
+	            .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret())
+	            .compact();
+	    return token;
 	}
 	
 	

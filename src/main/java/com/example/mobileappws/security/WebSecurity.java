@@ -40,11 +40,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
 		.cors().and()
 		.csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
 				.permitAll()
+				.antMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL)
+				.permitAll()
 				.antMatchers(HttpMethod.DELETE,"/users/**").hasRole("ACADEMICIAN") //here is for using role
 														  //.hasAuthority("DELETE_AUTHORITY)
 														  //hasAnyroleorauthority  for more than one role or authority
 				.antMatchers(HttpMethod.POST,"/courses/**").hasRole("ACADEMICIAN") //only academician can create course
 				.antMatchers(HttpMethod.PUT,"/courses/**").hasRole("ACADEMICIAN")
+				.antMatchers(HttpMethod.POST,"/announcement/**").permitAll()
+				.antMatchers(HttpMethod.GET,"/courses/**").permitAll()
 				.anyRequest().authenticated().and().
 				addFilter(getAuthenticationFilter())
 				.addFilter(new AuthorizationFilter(authenticationManager(),userRepository))

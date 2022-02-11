@@ -2,7 +2,6 @@ package com.example.mobileappws.ui.model.request;
 
 import java.util.Collection;
 
-import com.example.mobileappws.ui.model.response.UserRest;
 
 public class CourseRequestModel {
 
@@ -10,6 +9,7 @@ public class CourseRequestModel {
 	private int aktsCredit;
 	private int section;
 	private Collection<UserRequestModel> users;
+	private Collection<TimeSlotRequestModel> timeslots;
 	
 	
 	public CourseRequestModel() {
@@ -56,6 +56,16 @@ public class CourseRequestModel {
 		this.users = users;
 	}
 
+
+	public Collection<TimeSlotRequestModel> getTimeslots() {
+		return timeslots;
+	}
+
+
+	public void setTimeslots(Collection<TimeSlotRequestModel> timeslots) {
+		this.timeslots = timeslots;
+	}
+	
 
 
 	

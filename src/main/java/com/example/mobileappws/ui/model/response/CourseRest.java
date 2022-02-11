@@ -10,6 +10,8 @@ public class CourseRest {
 	private int aktsCredit;
 	private int section;
 	private Collection<UserRest> users;
+	private Collection<TimeSlotRest> timeslots;
+	
 	public CourseRest() {
 		// TODO Auto-generated constructor stub
 	}
@@ -43,6 +45,12 @@ public class CourseRest {
 	}
 	public void setUsers(Collection<UserRest> users) {
 		this.users = users;
+	}
+	public Collection<TimeSlotRest> getTimeslots() {
+		return timeslots;
+	}
+	public void setTimeslots(Collection<TimeSlotRest> timeslots) {
+		this.timeslots = timeslots;
 	}
 	
 	

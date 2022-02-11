@@ -2,14 +2,16 @@ package com.example.mobileappws.io.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.example.mobileappws.shared.dto.UserDto;
+
 
 @Entity(name="addresses")
 public class AddressEntity implements Serializable {
@@ -39,7 +41,7 @@ public class AddressEntity implements Serializable {
 	@Column(length = 30, nullable=false)
 	private String type; 
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
 	@JoinColumn(name="users_id")
 	private UserEntity userDetails;
 
